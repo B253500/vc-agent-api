@@ -1,19 +1,22 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
-from agents.market_sizing_agent import build_market_sizing_agent
-from core.schemas import StartupProfile
+from typing import Optional
 
 app = FastAPI()
 
-class DeckInput(BaseModel):
-    name: str | None = None
-    sector: str | None = None
-    website: str | None = None
-    funding_stage: str | None = None
+class MarketSizingRequest(BaseModel):
+    name: Optional[str] = None
+    sector: Optional[str] = None
+    website: Optional[str] = None
 
 @app.post("/market-sizing")
-async def market_sizing(input: DeckInput):
-    profile = StartupProfile(**input.model_dump())
-    agent, task = build_market_sizing_agent(profile)
-    result = task.run()
-    return {"result": result}
+def market_sizing(data: MarketSizingRequest):
+    # Simple mock response — replace with real CrewAI agent logic
+    return {
+        "TAM": 4500,
+        "SAM": 1200,
+        "SOM": 300,
+        "startup_name": data.name,
+        "sector": data.sector,
+        "source": "Market-sizing agent (mock)"
+    }
