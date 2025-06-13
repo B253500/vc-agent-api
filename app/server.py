@@ -1,3 +1,4 @@
+from app.pdf_generator import router as pdf_router
 from fastapi import FastAPI
 from pydantic import BaseModel
 from typing import Optional
@@ -5,6 +6,8 @@ from agents.market_sizing_agent import build_market_sizing_agent
 from core.schemas import StartupProfile
 
 app = FastAPI()
+
+app.include_router(pdf_router)
 
 class MarketSizingRequest(BaseModel):
     name: Optional[str] = None
