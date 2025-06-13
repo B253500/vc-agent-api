@@ -13,16 +13,24 @@ class MarketSizingRequest(BaseModel):
 
 @app.post("/market-sizing")
 def market_sizing(data: MarketSizingRequest):
-    # Build a partial profile
     profile = StartupProfile(
         name=data.name,
         sector=data.sector,
         website=data.website
     )
 
-    # Run agent + chain
-    _, task = build_market_sizing_agent(profile)
-    task.execute_step()  # this will run the LLM with callback to update profile
+    try:
+        # Build agent and run task
+        _, task = build_market_sizing_agent(profile)
+        task.execute_step()
+    except Exception as e:
+        # For debugging — log and return friendly error
+        return {
+            "error": "Agent execution failed",
+            "details": str(e),
+            "startup_name": profile.name,
+            "sector": profile.sector
+        }
 
     return {
         "TAM": profile.TAM or 0,
